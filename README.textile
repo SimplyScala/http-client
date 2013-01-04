@@ -1,0 +1,12 @@
+h1. SIMPLY SCALA HTTP
+
+This project provides a fast, asynchronous & and non-blocking http client API.
+It encapsulate the project "async-http-client":https://github.com/AsyncHttpClient/async-http-client
+
+This works in a Java 6+ environment
+
+h2. Roadmap
+
+* %{color:orange;padding-right:323px}simple GET request%                               %{color:orange;font-weight:bold}TODO%
+* %{color:orange;padding-right:312px}simple POST request%                              %{color:orange;font-weight:bold}TODO%
+* %{color:orange;padding-right:330px}Java API%                                         %{color:orange;font-weight:bold}TODO%
