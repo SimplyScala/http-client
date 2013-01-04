@@ -1,7 +1,7 @@
 import sbt._
 import sbt.Keys._
 
-class SimplyScalaHttpBuild extends Build {
+object SimplyScalaHttpBuild extends Build {
     // make library => 'sbt + package' & 'sbt + make-pom'
 
     lazy val root = Project(id = "simplyscala-http", base = file("."),
@@ -14,8 +14,10 @@ class SimplyScalaHttpBuild extends Build {
 
             crossScalaVersions := Seq("2.9.0", "2.9.1", "2.9.2"),
 
+            resolvers += "SimplyScala repository" at "https://github.com/SimplyScala/repository/raw/master/release",
+
             libraryDependencies ++= Seq(
-                "com.nig"       %% "async-http-client"  % "1.7.8",
+                "com.ning"       % "async-http-client"   % "1.7.8",
 
                 "org.scalatest" %% "scalatest"          % "1.8"     % "test",
                 "simplyscala"   %% "simplyscala-server" % "0.1"     % "test"
