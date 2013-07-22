@@ -12,4 +12,5 @@ h2. Roadmap
 * async api                                                                            TODO
 * sync api                                                                             TODO
 * akka actor plugin api                                                                TODO
-* OTHER HTTP VERB
+* other HTTP verb                                                                      TODO
+* WebSocket                                                                            TODO
