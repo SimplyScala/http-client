@@ -14,3 +14,4 @@ h2. Roadmap
 * akka actor plugin api                                                                TODO
 * other HTTP verb                                                                      TODO
 * WebSocket                                                                            TODO
+* SSL                                                                                  TODO
