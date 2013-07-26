@@ -2,15 +2,16 @@ package simplyscala
 
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
-import fr.simply.{ServerResponse, GET, StubServer}
+import fr.simply.{StaticServerResponse, GET, StubServer}
 import com.ning.http.client.{Response, ListenableFuture, AsyncHttpClient}
+import fr.simply.util._
 
 
 class HttpTest extends FunSuite with ShouldMatchers {
     test("test async http client api") {
         val route = GET (
             path = "/test",
-            response = ServerResponse("text/plain", "yo man !", 200)
+            response = StaticServerResponse(Text_Plain, "yo man !", 200)
         )
 
         val server = new StubServer(8080, route).start

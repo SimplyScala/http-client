@@ -10,17 +10,17 @@ object SimplyScalaHttpBuild extends Build {
 
             version := "0.1-SNAPSHOT",
 
-            scalaVersion := "2.9.2",
+            scalaVersion := "2.10.2",
 
-            crossScalaVersions := Seq("2.9.0", "2.9.1", "2.9.2"),
+            //crossScalaVersions := Seq("2.9.0", "2.9.1", "2.9.2"),
 
             resolvers += "SimplyScala repository" at "https://github.com/SimplyScala/repository/raw/master/release",
 
             libraryDependencies ++= Seq(
-                "com.ning"       % "async-http-client"   % "1.7.8",
+                "com.ning"       % "async-http-client"   % "1.7.16",
 
-                "org.scalatest" %% "scalatest"          % "1.8"     % "test",
-                "simplyscala"   %% "simplyscala-server" % "0.1"     % "test"
+                "org.scalatest" %% "scalatest"          % "1.9.1"     % "test",
+                "com.github.simplyscala"   %% "simplyscala-server" % "0.4"     % "test"
             )
         )
     )
