@@ -4,9 +4,9 @@ import sbt.Keys._
 object SimplyScalaHttpBuild extends Build {
     // make library => 'sbt + package' & 'sbt + make-pom'
 
-    lazy val root = Project(id = "simplyscala-http", base = file("."),
+    lazy val root = Project(id = "http-client", base = file("."),
         settings = Project.defaultSettings ++ Seq(
-            name := "simplyscala-http",
+            name := "http-client",
 
             organization := "com.github.simplyscala",
             description := "provides a reactive (async & non-blocking) http client API",
