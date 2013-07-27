@@ -1,0 +1,9 @@
+h2. Version 0.1
+
+    * delivery date : ???
+    * developer(s)  : bourdon.ugo@gmail.com
+    * features      :
+        ** async API
+        ** GET request
+        ** POST request
+        ** Headers & Cookies Handling

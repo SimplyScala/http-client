@@ -7,9 +7,10 @@ This works in a Java 6+ environment
 
 h2. Roadmap
 
-* %{color:orange;padding-right:323px}simple GET request%                               %{color:orange;font-weight:bold}TODO%
-* %{color:orange;padding-right:312px}simple POST request%                              %{color:orange;font-weight:bold}TODO%
-* async api                                                                            TODO
+* %{color:orange;padding-right:323px}simple GET request%                               WIP (0.1-SNAPSHOT)
+* %{color:orange;padding-right:312px}simple POST request%                              WIP (0.1-SNAPSHOT)
+* async api                                                                            WIP (0.1-SNAPSHOT)
+
 * sync api                                                                             TODO
 * Akka actor plugin api                                                                TODO
 * other HTTP verb                                                                      TODO
