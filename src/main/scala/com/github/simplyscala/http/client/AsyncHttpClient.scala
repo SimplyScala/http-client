@@ -1,15 +1,38 @@
 package com.github.simplyscala.http.client
 
 import com.ning.http.client.{AsyncCompletionHandler, Response}
+import com.ning.http.client.{ AsyncHttpClient => JavaAsyncHttpClient }
+import com.ning.http.client.{Cookie => JavaCookie }
 import concurrent.{Promise, Future}
+import request.util.Request
 
 class AsyncHttpClient {
-    private val javaClient = new com.ning.http.client.AsyncHttpClient()
+    private val javaClient = new JavaAsyncHttpClient()
 
     def get(url: String): Future[Response] = {
         val promise = Promise[Response]()
 
         executeGetRequest(url, promise)
+
+        promise.future
+    }
+
+    def get(request: Request): Future[Response] = {
+        val promise = Promise[Response]()
+
+        val url: String = s"${request.host}:${request.port}${request.path}"
+        val parametersUrl = request.parameters.foldLeft("?"){ case (acc,(k,v)) => acc + k + "=" + v }
+
+        val preparedGetRequest = javaClient.prepareGet( s"${url + parametersUrl}" )
+        request.cookies.foreach { cookie =>
+            preparedGetRequest.addCookie(new JavaCookie(cookie.domain, cookie.name, cookie.value, cookie.path,
+                                                    0, false, 0) //TODO version par défaut à retirer quand cookie validé
+            )
+        }
+
+        preparedGetRequest.execute(new AsyncCompletionHandler[Response] {
+            def onCompleted(response: Response): Response = { promise.success(response); response }
+        })
 
         promise.future
     }

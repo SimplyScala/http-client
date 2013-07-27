@@ -3,7 +3,7 @@ h2. Version 0.1
     * delivery date : ???
     * developer(s)  : bourdon.ugo@gmail.com
     * features      :
-        ** async API
+        ** async API with com.ning%async-http-client implementation
         ** GET request
         ** POST request
         ** Headers & Cookies Handling
