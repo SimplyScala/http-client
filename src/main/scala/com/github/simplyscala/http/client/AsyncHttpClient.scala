@@ -17,7 +17,7 @@ class AsyncHttpClient {
     def post(url: String, params: Map[String,String] = Map()): Future[Response] = {
         val promise = Promise[Response]()
 
-        executePostRequest(url, promise)
+        executePostRequest(url, params, promise)
 
         promise.future
     }
@@ -28,8 +28,12 @@ class AsyncHttpClient {
         })
     }
 
-    private def executePostRequest(url: String, promise: Promise[Response]) {
-        javaClient.preparePost(url).execute(new AsyncCompletionHandler[Response] {
+    private def executePostRequest(url: String, params: Map[String,String], promise: Promise[Response]) {
+        val preparedPostRequest = javaClient.preparePost(url)
+
+        params.foreach { case (k,v) => preparedPostRequest.addParameter(k,v) }
+
+        preparedPostRequest.execute(new AsyncCompletionHandler[Response] {
             def onCompleted(response: Response): Response = { promise.success(response); response }
         })
     }

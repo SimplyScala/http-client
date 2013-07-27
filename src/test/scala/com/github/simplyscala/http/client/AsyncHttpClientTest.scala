@@ -34,4 +34,17 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
             Await.result(response, Duration.Inf).getStatusCode should be (200)
         }
     }
+
+    test("[POST] request with params should return response") {
+        val route = POST (
+            path = "*",
+            params = Map("toto" -> "titi"),
+            response = StaticServerResponse(Text_Plain, "yo", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val response: Future[Response] = new AsyncHttpClient().post(s"http://localhost:${server.portInUse}", Map("toto"-> "titi"))
+            Await.result(response, Duration.Inf).getStatusCode should be (200)
+        }
+    }
 }
