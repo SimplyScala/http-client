@@ -11,7 +11,8 @@ h2. Roadmap
 * %{color:orange;padding-right:312px}simple POST request%                              %{color:orange;font-weight:bold}TODO%
 * async api                                                                            TODO
 * sync api                                                                             TODO
-* akka actor plugin api                                                                TODO
+* Akka actor plugin api                                                                TODO
 * other HTTP verb                                                                      TODO
 * WebSocket                                                                            TODO
 * SSL                                                                                  TODO
+* Response streaming                                                                   TODO

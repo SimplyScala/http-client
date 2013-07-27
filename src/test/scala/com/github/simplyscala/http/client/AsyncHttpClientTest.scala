@@ -6,7 +6,7 @@ import fr.simply.fixture.StubServerFixture
 import fr.simply.{POST, StaticServerResponse, GET}
 import fr.simply.util.Text_Plain
 import concurrent.{Await, Future}
-import com.ning.http.client.{ListenableFuture, Response}
+import com.ning.http.client.Response
 import concurrent.duration.Duration
 
 class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFixture {

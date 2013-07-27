@@ -12,8 +12,6 @@ object SimplyScalaHttpBuild extends Build {
 
             scalaVersion := "2.10.2",
 
-            //crossScalaVersions := Seq("2.9.0", "2.9.1", "2.9.2"),
-
             resolvers += "SimplyScala repository" at "https://github.com/SimplyScala/repository/raw/master/release",
 
             libraryDependencies ++= Seq(
