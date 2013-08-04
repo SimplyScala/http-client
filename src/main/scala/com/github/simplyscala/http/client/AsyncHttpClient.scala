@@ -1,13 +1,19 @@
 package com.github.simplyscala.http.client
 
-import com.ning.http.client.{AsyncCompletionHandler, Response}
-import com.ning.http.client.{ AsyncHttpClient => JavaAsyncHttpClient }
-import com.ning.http.client.{Cookie => JavaCookie }
+import com.ning.http.client.{AsyncHttpClient => JavaAsyncHttpClient, Cookie => JavaCookie, AsyncHttpClientConfig, AsyncCompletionHandler, Response}
 import concurrent.{Promise, Future}
 import request.util.Request
+import scala.concurrent.duration._
 
-class AsyncHttpClient {
-    private val javaClient = new JavaAsyncHttpClient()
+class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
+    private val javaClient = {
+        val builder = new AsyncHttpClientConfig.Builder()
+        builder.setCompressionEnabled(true)
+               .setRequestTimeoutInMs(requestTimeout.toMillis.toInt)  // TODO defense the position Long.toInt
+               .build()
+
+        new JavaAsyncHttpClient(builder.build())
+    }
 
     /**
      * execute HTTP GET request from simple String request
