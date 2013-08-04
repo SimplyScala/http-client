@@ -9,3 +9,4 @@ h2. Version 0.1
         ** Cookies handling (bugs with maxAge, secure & version parameters)
         ** scala docs on public def for AsyncHttpClient class
         ** timeout handling
+        ** Header handling

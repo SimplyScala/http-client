@@ -1,10 +1,11 @@
 package com.github.simplyscala.http.client.request.util
 
 case class Request(host: String,
-                   port: Int,
+                   port: Int = 80,
                    path: String,
-                   parameters: Map[String,String],
-                   cookies: Cookie*
+                   parameters: Map[String,String] = Map(),
+                   cookies: Seq[Cookie] = Nil,
+                   headers: Seq[Header] = Nil
                    )
 
 case class Cookie(domain: String = "",
@@ -20,6 +21,8 @@ case class Cookie(domain: String = "",
                   commentUrl: String = "",
                   ports: Iterable[Int] = Nil*/
                   )
+
+case class Header(key: String, value: String)
 
 /*
 AsyncHttpClient.BoundRequestBuilder 	addBodyPart(Part part)

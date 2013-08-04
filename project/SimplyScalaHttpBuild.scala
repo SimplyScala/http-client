@@ -17,11 +17,13 @@ object SimplyScalaHttpBuild extends Build {
 
             crossScalaVersions := Seq("2.10.0", "2.10.1", "2.10.2"),
 
+            resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+
             libraryDependencies ++= Seq(
                 "com.ning"       % "async-http-client"   % "1.7.16",
 
                 "org.scalatest" %% "scalatest"          % "1.9.1"     % "test",
-                "com.github.simplyscala"   %% "simplyscala-server" % "0.4"     % "test"/*,
+                "com.github.simplyscala"   %% "simplyscala-server" % "0.5-SNAPSHOT"     % "test"/*,
                 "com.twitter"              %% "finagle-core"       % "6.5.2"   % "test",
                 "com.twitter"              %% "finagle-http"       % "6.5.2"   % "test"*/
             ),

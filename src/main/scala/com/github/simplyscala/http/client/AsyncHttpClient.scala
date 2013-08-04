@@ -5,12 +5,20 @@ import concurrent.{Promise, Future}
 import request.util.Request
 import scala.concurrent.duration._
 
-class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
+/**
+ * execute some HTTP Request (GET, POST, ...) asynchronously
+ * @param requestTimeout define the timeout of the request - inifite by default - import scala.concurrent.duration._ to use '3 seconds' notation
+ */
+class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     private val javaClient = {
+
         val builder = new AsyncHttpClientConfig.Builder()
-        builder.setCompressionEnabled(true)
-               .setRequestTimeoutInMs(requestTimeout.toMillis.toInt)  // TODO defense the position Long.toInt
-               .build()
+        //builder.setCompressionEnabled(true)
+        requestTimeout match {
+            case Duration.Inf | Duration.MinusInf =>
+            case otherValue => builder.setRequestTimeoutInMs(requestTimeout.toMillis.toInt)  // TODO defense the position Long.toInt
+        }
+        builder.build()
 
         new JavaAsyncHttpClient(builder.build())
     }
@@ -18,7 +26,7 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
     /**
      * execute HTTP GET request from simple String request
      * @param url the GET url want to execute 'http://mywebsite:8180/thepath?key1=value1;key2=value2'
-     * @return an asynchronous Response
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def get(url: String): Future[Response] = {
         val promise = Promise[Response]()
@@ -28,8 +36,8 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
 
     /**
      * execute HTTP GET request from Request instance
-     * @param request: com.github.simplyscala.http.client.request.util.Request
-     * @return an asynchronous Response
+     * @param request [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def get(request: Request): Future[Response] = {
         val promise = Promise[Response]()
@@ -41,7 +49,7 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
      * execute HTTP POST request from simple String request
      * @param url the POST url want to execute 'http://mywebsite:8180/thepath'
      * @param params form params for POST request
-     * @return an asynchronous Response
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def post(url: String, params: Map[String,String] = Map()): Future[Response] = {
         val promise = Promise[Response]()
@@ -51,8 +59,8 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
 
     /**
      * execute HTTP GET request from Request instance
-     * @param request: com.github.simplyscala.http.client.request.util.Request
-     * @return an asynchronous Response
+     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def post(request: Request): Future[Response] = {
         val promise = Promise[Response]()
@@ -62,7 +70,10 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
 
     private def initPreparedGetRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
         val preparedGetRequest = javaClient.prepareGet(buildGetUrl(request))
+
         addCookieInPreparedRequest(request, preparedGetRequest)
+        request.headers.foreach { header => preparedGetRequest.addHeader(header.key, header.value) }
+
         preparedGetRequest
     }
 
@@ -76,7 +87,9 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
         val url = s"${request.host}:${request.port}${request.path}"
 
         val preparedPostRequest = javaClient.preparePost(url)
+
         addCookieInPreparedRequest(request, preparedPostRequest)
+        request.headers.foreach { header => preparedPostRequest.addHeader(header.key, header.value) }
         request.parameters.foreach { case (k, v) => preparedPostRequest.addParameter(k, v)}
 
         preparedPostRequest
@@ -103,26 +116,3 @@ class AsyncHttpClient(requestTimeout: Duration = 3 seconds) {
         }
     }
 }
-
-/*Exemple API asynchrone
-======================
-
-val asyncHttpClient = new AsyncHttpClient(httpOptions, httpHeaders) // options::timeout, proxy etc ...
-val result: Future[HttpResponse] = asyncHttpClient.get("http://myurl.com")
-
-Example API synchrone
-=====================
-
-val httpClient = new HttpClient(httpOptions, httpHeaders)
-val result: HttpResponse = httpClient.get(url: String, port: Int)
-
-Example API HttpResponse
-========================
-
-val response = ...
-response.header Option[Header]
-response.body Option[Body] .toString, .toJson, .toXml, toStream ????
-response.code Int
-response.size Int
-response.sender Option[Sender]
-response*/
