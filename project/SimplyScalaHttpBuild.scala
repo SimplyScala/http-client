@@ -9,7 +9,7 @@ object SimplyScalaHttpBuild extends Build {
             name := "http-client",
 
             organization := "com.github.simplyscala",
-            description := "provides a reactive (async & non-blocking) http client API",
+            description := "provides a reactive (async & non-blocking) http client API (based on netty)",
 
             version := "0.1-SNAPSHOT",
 
