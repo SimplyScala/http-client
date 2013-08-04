@@ -22,7 +22,7 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
 
         withStubServerFixture(8080, route) { server =>
             val response: Future[Response] = new AsyncHttpClient().get(s"http://localhost:${server.portInUse}/test")
-            Await.result(response, 100 milliseconds).getStatusCode should be (200)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
         }
     }
 
@@ -35,7 +35,7 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
 
         withStubServerFixture(8080, route) { server =>
             val response: Future[Response] = new AsyncHttpClient().get(s"http://localhost:${server.portInUse}/test?toto=titi")
-            Await.result(response, 100 milliseconds).getStatusCode should be (200)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
         }
     }
 
@@ -47,7 +47,7 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
 
         withStubServerFixture(8080, route) { server =>
             val response: Future[Response] = new AsyncHttpClient().post(s"http://localhost:${server.portInUse}/test")
-            Await.result(response, 100 milliseconds).getStatusCode should be (200)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
         }
     }
 
@@ -60,7 +60,35 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
 
         withStubServerFixture(8080, route) { server =>
             val response: Future[Response] = new AsyncHttpClient().post(s"http://localhost:${server.portInUse}", Map("toto"-> "titi"))
-            Await.result(response, 100 milliseconds).getStatusCode should be (200)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[GET] request using 'Request instance' should return response") {
+        val route = GET (
+            path = "/test",
+            params = Map("toto" -> "titi"),
+            response = StaticServerResponse(Text_Plain, "yo", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val request = Request("http://localhost", server.portInUse, "/test", Map("toto" -> "titi"))
+            val response = new AsyncHttpClient().get(request)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[POST] request using 'Request instance' should return response") {
+        val route = POST (
+            path = "/test",
+            params = Map("toto" -> "titi"),
+            response = StaticServerResponse(Text_Plain, "yo", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val request = Request("http://localhost", server.portInUse, "/test", Map("toto" -> "titi"))
+            val response = new AsyncHttpClient().post(request)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
         }
     }
 
