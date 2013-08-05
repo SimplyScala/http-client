@@ -95,7 +95,7 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
     test("[GET] request with cookie should return response") {
         val dynamicResponse = { request: ServerRequest =>
             val cookie = request.getCookie("name")
-            //println("must : 42 but : " + cookie.getVersion) // failed param
+            println("must : 42 but : " + cookie.getVersion) // failed param
             //println("must : true but : " + cookie.getSecure)// failed param
             //println("must : 12 but : " + cookie.getExpiry)  // failed param
             if(cookie != null && cookie.getValue == "value" && cookie.getName == "name" &&

@@ -10,3 +10,11 @@ h2. Version 0.1
         ** scala docs on public def for AsyncHttpClient class
         ** timeout handling
         ** Header handling
+
+h2. Version 0.2
+
+    * delivery date : ???
+        * developer(s)  : bourdon.ugo@gmail.com
+        * features      :
+            ** SSL handling
+            ** use AsyncHttpClientConfig.Builder() for AsyncHttpClient constructor (enabled all config properties of java AsyncHttpClient)

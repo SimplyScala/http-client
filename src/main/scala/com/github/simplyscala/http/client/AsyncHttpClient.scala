@@ -10,8 +10,9 @@ import scala.concurrent.duration._
  * @param requestTimeout define the timeout of the request - inifite by default - import scala.concurrent.duration._ to use '3 seconds' notation
  */
 class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
-    private val javaClient = {
+    // TODO provide constructor with AsyncHttpClientConfig.Builder parameter or wrap this clas to case class
 
+    private val javaClient = {
         val builder = new AsyncHttpClientConfig.Builder()
         //builder.setCompressionEnabled(true)
         requestTimeout match {

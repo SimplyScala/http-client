@@ -20,7 +20,7 @@ object SimplyScalaHttpBuild extends Build {
             resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
 
             libraryDependencies ++= Seq(
-                "com.ning"       % "async-http-client"   % "1.7.16",
+                "com.ning"       % "async-http-client"   % "1.7.19",
 
                 "org.scalatest" %% "scalatest"          % "1.9.1"     % "test",
                 "com.github.simplyscala"   %% "simplyscala-server" % "0.5-SNAPSHOT"     % "test"/*,
