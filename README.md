@@ -1,4 +1,4 @@
-h1. SIMPLY SCALA HTTP CLIENT
+SIMPLY SCALA HTTP CLIENT
 
 This project provides a fast, asynchronous & and non-blocking http client API.
 It encapsulate, in Scala 2.10 API, the project "async-http-client":https://github.com/AsyncHttpClient/async-http-client
@@ -7,9 +7,9 @@ This works in a Java 6+ environment
 
 h2. Roadmap
 
-* %{color:orange;padding-right:323px}simple GET request%                               WIP (0.1-SNAPSHOT)
-* %{color:orange;padding-right:312px}simple POST request%                              WIP (0.1-SNAPSHOT)
-* async api                                                                            WIP (0.1-SNAPSHOT)
+* simple GET request                                                                   OK  (0.1-SNAPSHOT)
+* simple POST request                                                                  OK  (0.1-SNAPSHOT)
+* async api                                                                            OK  (0.1-SNAPSHOT)
 
 * sync api                                                                             TODO
 * Akka actor plugin api                                                                TODO
