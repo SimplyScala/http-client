@@ -1,19 +1,99 @@
-SIMPLY SCALA HTTP CLIENT
+h1. SIMPLY SCALA HTTP CLIENT
 
 This project provides a fast, asynchronous & and non-blocking http client API.
 It encapsulate, in Scala 2.10 API, the project "async-http-client":https://github.com/AsyncHttpClient/async-http-client
 
 This works in a Java 6+ environment
 
+The project is available in 0.1-SNAPSHOT version !
+
 h2. Roadmap
 
 * simple GET request                                                                   OK  (0.1-SNAPSHOT)
 * simple POST request                                                                  OK  (0.1-SNAPSHOT)
 * async api                                                                            OK  (0.1-SNAPSHOT)
+* HEAD, PUT, DELETE request                                                            OK  (0.1-SNAPSHOT)
 
 * sync api                                                                             TODO
+* proxy handling                                                                       TODO
 * Akka actor plugin api                                                                TODO
 * other HTTP verb                                                                      TODO
 * WebSocket                                                                            TODO
 * SSL                                                                                  TODO
 * Response streaming                                                                   TODO
+
+h2. Installation
+
+h3. Git repo
+
+simplyscala-server is a SBT project.
+It use 0.12 sbt version.
+
+h3. Try SNAPSHOT version
+
+You could be tempted to try SNAPSHOT version to test project's next features.
+
+h4. with Maven
+
+<pre><code>
+<project ...>
+
+   <repositories>
+      <repository>
+         <id>maven snapshot</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      </repository>
+   </repositories>
+
+   ...
+
+   <dependency>
+      <groupId>com.github.simplyscala</groupId>
+      <artifactId>http-client_2.10</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+</code></pre>
+
+h4. with SBT
+
+<pre><code>
+   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+   libraryDependencies += "com.github.simplyscala" %% "http-client" % "0.1-SNAPSHOT"
+</code></pre>
+
+h2. Usage
+
+h3. Simple GET HTTP request
+
+<code>val response: Future[Response] = new AsyncHttpClient().get("http://someUrl/path?param1=value1;param2=value2")</code>
+
+h3. Simple POST HTTP request
+
+<code>val response: Future[Response] = new AsyncHttpClient().post("http://someUrl/path", Map("param" -> "value")</code>
+
+h3. How to use <code>scala.concurent.Future[+T]</code> api
+
+The AsyncHttpClient return asynchronous response. With Scala language, we use <code>Future</code> api.
+When we perform, for example, GET request :
+<code>val response: Future[Response] = new AsyncHttpClient().get("http://github.com/simplyscala/http-client")</code>
+
+We are two major ways to use this result :
+
+h4. Callback api
+
+// link to Future SIP & ScalaDoc
+
+h4. Monadic api
+
+h4. Blocking
+
+If we use asynchronous api to perform HTTP request, it is not recommended to block the result. But sometimes, we must :D
+
+<pre><code>
+import scala.concurrent.duration._
+...
+
+val futureResponse: Future[Response] = new AsyncHttpClient().get("http://github.com/simplyscala/http-client")
+val response = Await.result(futureResponse, 1 second)
+</code></pre>
