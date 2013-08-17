@@ -95,6 +95,17 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     /**
      * execute HTTP HEAD request from simple String request
      * HEAD request produce same server response than GET request except HEAD request produce an empty-body server response
+     *
+     * @example with params into url
+     * {{{
+     * new AsyncHttpClient().head("http://someurl:8080/test?param1=value1;param2=value2")
+     * }}}
+     *
+     * @example with params not into url
+     * {{{
+     * new AsyncHttpClient().head("http://someurl:8080/test", Map("param1" -> "value1", "param2" -> "value2" ))
+     * }}}
+     *
      * @param url the HEAD url want to execute 'http://mywebsite:8180/thepath'
      * @param params form params for HEAD request
      * @return an asynchronous [[com.ning.http.client.Response Response]]
@@ -102,6 +113,18 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     def head(url: String, params: Map[String,String] = Map()): Future[Response] = {
         val promise = Promise[Response]()
         executeRequest(initPreparedHeadRequest(url, params), promise)
+        promise.future
+    }
+
+    /**
+     * execute HTTP HEAD request from Request instance
+     * HEAD request produce same server response than GET request except HEAD request produce an empty-body server response
+     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def head(request: Request): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedHeadRequest(request), promise)
         promise.future
     }
 
@@ -152,7 +175,19 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
     private def initPreparedHeadRequest(url: String, params: Map[String, String]): JavaAsyncHttpClient#BoundRequestBuilder = {
         val preparedHeadRequest = javaClient.prepareHead(url)
-        params.foreach { case (k, v) => preparedHeadRequest.addParameter(k, v) }
+        params.foreach { case (k, v) => preparedHeadRequest.addQueryParameter(k, v) }
+        preparedHeadRequest
+    }
+
+    private def initPreparedHeadRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val url = s"${request.host}:${request.port}${request.path}"
+
+        val preparedHeadRequest = javaClient.prepareHead(url)
+
+        addCookieInPreparedRequest(request, preparedHeadRequest)
+        request.headers.foreach { header => preparedHeadRequest.addHeader(header.key, header.value) }
+        request.parameters.foreach { case (k, v) => preparedHeadRequest.addQueryParameter(k, v)}
+
         preparedHeadRequest
     }
 
