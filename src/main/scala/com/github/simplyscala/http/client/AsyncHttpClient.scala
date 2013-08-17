@@ -10,7 +10,7 @@ import scala.concurrent.duration._
  * @param requestTimeout define the timeout of the request - inifite by default - import scala.concurrent.duration._ to use '3 seconds' notation
  */
 class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
-    // TODO provide constructor with AsyncHttpClientConfig.Builder parameter or wrap this clas to case class
+    // TODO provide constructor with AsyncHttpClientConfig.Builder parameter or wrap this class to case class
 
     private val javaClient = {
         val builder = new AsyncHttpClientConfig.Builder()
@@ -59,13 +59,49 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     }
 
     /**
-     * execute HTTP GET request from Request instance
+     * execute HTTP POST request from Request instance
      * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def post(request: Request): Future[Response] = {
         val promise = Promise[Response]()
         executeRequest(initPreparedPostRequest(request), promise)
+        promise.future
+    }
+
+    /**
+     * execute HTTP PUT request from simple String request
+     * @param url the PUT url want to execute 'http://mywebsite:8180/thepath'
+     * @param params form params for PUT request
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def put(url: String, params: Map[String,String] = Map()): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedPutRequest(url, params), promise)
+        promise.future
+    }
+
+    /**
+     * execute HTTP PUT request from Request instance
+     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def put(request: Request): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedPutRequest(request), promise)
+        promise.future
+    }
+
+    /**
+     * execute HTTP HEAD request from simple String request
+     * HEAD request produce same server response than GET request except HEAD request produce an empty-body server response
+     * @param url the HEAD url want to execute 'http://mywebsite:8180/thepath'
+     * @param params form params for HEAD request
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def head(url: String, params: Map[String,String] = Map()): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedHeadRequest(url, params), promise)
         promise.future
     }
 
@@ -94,6 +130,30 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
         request.parameters.foreach { case (k, v) => preparedPostRequest.addParameter(k, v)}
 
         preparedPostRequest
+    }
+
+    private def initPreparedPutRequest(url: String, params: Map[String, String]): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val preparedPutRequest = javaClient.preparePut(url)
+        params.foreach { case (k, v) => preparedPutRequest.addParameter(k, v) }
+        preparedPutRequest
+    }
+
+    private def initPreparedPutRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val url = s"${request.host}:${request.port}${request.path}"
+
+        val preparedPutRequest = javaClient.preparePut(url)
+
+        addCookieInPreparedRequest(request, preparedPutRequest)
+        request.headers.foreach { header => preparedPutRequest.addHeader(header.key, header.value) }
+        request.parameters.foreach { case (k, v) => preparedPutRequest.addParameter(k, v)}
+
+        preparedPutRequest
+    }
+
+    private def initPreparedHeadRequest(url: String, params: Map[String, String]): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val preparedHeadRequest = javaClient.prepareHead(url)
+        params.foreach { case (k, v) => preparedHeadRequest.addParameter(k, v) }
+        preparedHeadRequest
     }
 
     private def executeRequest(preparedRequest: JavaAsyncHttpClient#BoundRequestBuilder, promise: Promise[Response]) {

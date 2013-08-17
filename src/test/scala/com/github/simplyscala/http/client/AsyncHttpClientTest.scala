@@ -3,14 +3,18 @@ package com.github.simplyscala.http.client
 import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
 import fr.simply.fixture.StubServerFixture
-import fr.simply.{DynamicServerResponse, POST, StaticServerResponse, GET}
+import fr.simply._
 import fr.simply.util.Text_Plain
 import org.simpleframework.http.{ Request => ServerRequest }
 import concurrent.{Await, Future}
 import com.ning.http.client.Response
-import com.github.simplyscala.http.client.request.util.{Header, Cookie, Request}
 import concurrent.duration._
 import java.util.concurrent.TimeoutException
+import com.github.simplyscala.http.client.request.util.Header
+import fr.simply.DynamicServerResponse
+import fr.simply.StaticServerResponse
+import com.github.simplyscala.http.client.request.util.Request
+import com.github.simplyscala.http.client.request.util.Cookie
 
 class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFixture {
 
@@ -197,6 +201,87 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
             val request = Request("http://localhost", server.portInUse, "/", headers = Seq(Header("toto", "titi"), Header("key", "value")))
             val response = new AsyncHttpClient().post(request)
             Await.result(response, 300 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[PUT] request") {
+        val route = PUT (
+            path = "/test",
+            params = Map("test" -> "value"),
+            response = StaticServerResponse(Text_Plain, "yo", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val response: Future[Response] = new AsyncHttpClient().put(s"http://localhost:${server.portInUse}/test", Map("test" -> "value"))
+            Await.result(response, 200 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[PUT] request using 'Request instance' should return response") {
+        val route = PUT (
+            path = "/test",
+            params = Map("test" -> "value"),
+            response = StaticServerResponse(Text_Plain, "yo", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val request = Request("http://localhost", server.portInUse, "/test", Map("test" -> "value"))
+            val response = new AsyncHttpClient().put(request)
+            Await.result(response, 200 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[PUT] request with header should return response") {
+        val dynamicResponse = { request: ServerRequest =>
+            println(request.getHeader)
+            if(request.getValue("toto") == "titi"  && request.getValue("key") == "value") StaticServerResponse(Text_Plain, "OK dynamic", 200)
+            else StaticServerResponse(Text_Plain, "KO", 404)
+        }
+
+        val route = PUT (
+            path = "*",
+            response = DynamicServerResponse(dynamicResponse)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val request = Request("http://localhost", server.portInUse, "/", headers = Seq(Header("toto", "titi"), Header("key", "value")))
+            val response = new AsyncHttpClient().put(request)
+            Await.result(response, 300 milliseconds).getStatusCode should be (200)
+        }
+    }
+
+    test("[PUT] request with cookie should return response") {
+        val dynamicResponse = { request: ServerRequest =>
+            val cookie = request.getCookie("name")
+            if(cookie != null && cookie.getValue == "value" && cookie.getName == "name" &&
+                cookie.getDomain == "domain" && cookie.getPath == "path")
+                StaticServerResponse(Text_Plain, "OK dynamic", 200)
+            else StaticServerResponse(Text_Plain, "OK dynamic", 404)
+        }
+
+        val route = PUT (
+            path = "*",
+            response = DynamicServerResponse(dynamicResponse)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val cookie: Cookie = Cookie("domain", "name", "value", "path")
+            val request: Request = Request("http://localhost", server.portInUse, "/", Map("toto" -> "titi"), Seq(cookie))
+            val response: Future[Response] = new AsyncHttpClient().put(request)
+            Await.result(response, 1 seconds).getStatusCode should be (200)
+        }
+    }
+
+    ignore("[HEAD] request") {
+        val route = HEAD (
+            path = "/test",
+            params = Map("test" -> "value"),
+            response = StaticServerResponse(Text_Plain, "", 200)
+        )
+
+        withStubServerFixture(8080, route) { server =>
+            val response: Future[Response] = new AsyncHttpClient().head(s"http://localhost:${server.portInUse}/test", Map("test" -> "value"))
+            Await.result(response, 200 milliseconds).getStatusCode should be (200)
         }
     }
 }
