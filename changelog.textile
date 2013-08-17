@@ -12,6 +12,7 @@ h2. Version 0.1
         ** Header handling
         ** PUT request
         ** HEAD request
+        ** DELETE request
 
 h2. Version 0.2
 

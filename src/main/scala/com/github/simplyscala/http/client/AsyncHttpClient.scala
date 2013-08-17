@@ -128,6 +128,29 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
         promise.future
     }
 
+    /**
+     * execute HTTP DELETE request from simple String request
+     * @param url the DELETE url want to execute 'http://mywebsite:8180/thepath'
+     * @param params form params for PUT request
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def delete(url: String, params: Map[String,String] = Map()): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedDeleteRequest(url, params), promise)
+        promise.future
+    }
+
+    /**
+     * execute HTTP DELETE request from Request instance
+     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @return an asynchronous [[com.ning.http.client.Response Response]]
+     */
+    def delete(request: Request): Future[Response] = {
+        val promise = Promise[Response]()
+        executeRequest(initPreparedDeleteRequest(request), promise)
+        promise.future
+    }
+
     private def initPreparedGetRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
         val preparedGetRequest = javaClient.prepareGet(buildGetUrl(request))
 
@@ -189,6 +212,24 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
         request.parameters.foreach { case (k, v) => preparedHeadRequest.addQueryParameter(k, v)}
 
         preparedHeadRequest
+    }
+
+    private def initPreparedDeleteRequest(url: String, params: Map[String, String]): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val preparedDeleteRequest = javaClient.prepareDelete(url)
+        params.foreach { case (k, v) => preparedDeleteRequest.addParameter(k, v) }
+        preparedDeleteRequest
+    }
+
+    private def initPreparedDeleteRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val url = s"${request.host}:${request.port}${request.path}"
+
+        val preparedDeleteRequest = javaClient.prepareDelete(url)
+
+        addCookieInPreparedRequest(request, preparedDeleteRequest)
+        request.headers.foreach { header => preparedDeleteRequest.addHeader(header.key, header.value) }
+        request.parameters.foreach { case (k, v) => preparedDeleteRequest.addParameter(k, v)}
+
+        preparedDeleteRequest
     }
 
     private def executeRequest(preparedRequest: JavaAsyncHttpClient#BoundRequestBuilder, promise: Promise[Response]) {
