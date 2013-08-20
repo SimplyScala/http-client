@@ -235,6 +235,7 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     private def executeRequest(preparedRequest: JavaAsyncHttpClient#BoundRequestBuilder, promise: Promise[Response]) {
         preparedRequest.execute(new AsyncCompletionHandler[Response] {
             def onCompleted(response: Response): Response = { promise.success(response); response }
+            override def onThrowable(t: Throwable ) { promise.failure(t) }
         })
     }
 

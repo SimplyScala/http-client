@@ -68,6 +68,11 @@ class AsyncHttpClientTest extends FunSuite with ShouldMatchers with StubServerFi
         }
     }
 
+    test("[ANY] when server is down, should return Exception") {
+        val response: Future[Response] = new AsyncHttpClient().get(s"http://localhost:123/test")
+        evaluating { Await.result(response, 300 milliseconds) } should produce[java.net.ConnectException]
+    }
+
     test("[GET] request using 'Request instance' should return response") {
         val route = GET (
             path = "/test",
