@@ -26,12 +26,14 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
     /**
      * execute HTTP GET request from simple String request
-     * @param url the GET url want to execute 'http://mywebsite:8180/thepath?key1=value1;key2=value2'
+     * @param url the GET url want to execute 'http://mywebsite:8180/thepath'
+     * @param params the GET query parameters [Optional] if you want your GET query parameters was url encoded use params
+     *               and don't write url like 'http://mywebsite:8180/thepath?key1=value1;key2=value2'
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
-    def get(url: String): Future[Response] = {
+    def get(url: String, params: Map[String,String] = Map()): Future[Response] = {
         val promise = Promise[Response]()
-        executeRequest(javaClient.prepareGet(url), promise)
+        executeRequest(initPreparedGetRequest(url, params), promise)
         promise.future
     }
 
@@ -151,11 +153,18 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
         promise.future
     }
 
+    private def initPreparedGetRequest(url: String, params: Map[String, String]): JavaAsyncHttpClient#BoundRequestBuilder = {
+        val preparedGetRequest = javaClient.prepareGet(url)
+        params.foreach { case (k, v) => preparedGetRequest.addQueryParameter(k, v) }
+        preparedGetRequest
+    }
+
     private def initPreparedGetRequest(request: Request): JavaAsyncHttpClient#BoundRequestBuilder = {
-        val preparedGetRequest = javaClient.prepareGet(buildGetUrl(request))
+        val preparedGetRequest = javaClient.prepareGet(s"${request.host}:${request.port}${request.path}")
 
         addCookieInPreparedRequest(request, preparedGetRequest)
         request.headers.foreach { header => preparedGetRequest.addHeader(header.key, header.value) }
+        request.parameters.foreach { case (k, v) => preparedGetRequest.addQueryParameter(k, v)}
 
         preparedGetRequest
     }
@@ -237,13 +246,6 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
             def onCompleted(response: Response): Response = { promise.success(response); response }
             override def onThrowable(t: Throwable ) { promise.failure(t) }
         })
-    }
-
-    private def buildGetUrl(request: Request): String = {
-        val url = s"${request.host}:${request.port}${request.path}"
-        val parametersUrl = request.parameters.foldLeft("?"){ case (acc,(k,v)) => acc + k + "=" + v }
-
-        url + parametersUrl
     }
 
     private def addCookieInPreparedRequest(request: Request, preparedRequest: JavaAsyncHttpClient#BoundRequestBuilder) {
