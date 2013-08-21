@@ -14,6 +14,7 @@ h2. Roadmap
 * async api                                                                            OK  (0.1-SNAPSHOT)
 * HEAD, PUT, DELETE request                                                            OK  (0.1-SNAPSHOT)
 
+* fluent API                                                                           TODO
 * sync api                                                                             TODO
 * proxy handling                                                                       TODO
 * Akka actor plugin api                                                                TODO
