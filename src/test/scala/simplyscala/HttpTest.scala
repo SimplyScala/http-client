@@ -18,7 +18,8 @@ class HttpTest extends FunSuite with ShouldMatchers {
 
         val httpClient = new AsyncHttpClient()
 
-        val mayBeResponse: ListenableFuture[Response] = httpClient.prepareGet("http://localhost:8080/test").execute()
+        val mayBeResponse: ListenableFuture[Response] =
+            httpClient.prepareGet(s"http://localhost:${server.portInUse}/test").execute()
 
         mayBeResponse.get().getStatusCode should be (200)
 
