@@ -2,8 +2,10 @@ package com.github.simplyscala.http.client
 
 import com.ning.http.client.{AsyncHttpClient => JavaAsyncHttpClient, Cookie => JavaCookie, AsyncHttpClientConfig, AsyncCompletionHandler, Response}
 import concurrent.{Promise, Future}
-import request.util.Request
+import com.github.simplyscala.http.client.request.util._
 import scala.concurrent.duration._
+import com.github.simplyscala.http.client.request.util.Request
+import com.github.simplyscala.http.client.request.util.ByteBody
 
 /**
  * execute some HTTP Request (GET, POST, ...) asynchronously
@@ -37,9 +39,11 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
         promise.future
     }
 
+    // TODO Map(String, List(String)) on a le droit d'avoir deux fois la clé toto dans une url get, post etc...
+
     /**
      * execute HTTP GET request from Request instance
-     * @param request [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @param request [[Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def get(request: Request): Future[Response] = {
@@ -62,7 +66,7 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
     /**
      * execute HTTP POST request from Request instance
-     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @param request: [[Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def post(request: Request): Future[Response] = {
@@ -85,7 +89,7 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
     /**
      * execute HTTP PUT request from Request instance
-     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @param request: [[Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def put(request: Request): Future[Response] = {
@@ -121,7 +125,7 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
     /**
      * execute HTTP HEAD request from Request instance
      * HEAD request produce same server response than GET request except HEAD request produce an empty-body server response
-     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @param request: [[Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def head(request: Request): Future[Response] = {
@@ -144,7 +148,7 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
     /**
      * execute HTTP DELETE request from Request instance
-     * @param request: [[com.github.simplyscala.http.client.request.util.Request Request]]
+     * @param request: [[Request Request]]
      * @return an asynchronous [[com.ning.http.client.Response Response]]
      */
     def delete(request: Request): Future[Response] = {
@@ -164,7 +168,13 @@ class AsyncHttpClient(requestTimeout: Duration = Duration.Inf) {
 
         addCookieInPreparedRequest(request, preparedGetRequest)
         request.headers.foreach { header => preparedGetRequest.addHeader(header.key, header.value) }
-        request.parameters.foreach { case (k, v) => preparedGetRequest.addQueryParameter(k, v)}
+        request.parameters.foreach { case (k, v) => preparedGetRequest.addQueryParameter(k, v) }
+
+        request.body match {
+            case ByteBody(body) => preparedGetRequest.setBody(body)
+            case StringBody(body) => preparedGetRequest.setBody(body)
+            case NoBody => // no body
+        }
 
         preparedGetRequest
     }

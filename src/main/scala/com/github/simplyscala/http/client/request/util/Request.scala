@@ -1,12 +1,25 @@
 package com.github.simplyscala.http.client.request.util
 
+// TODO parameters => body: Body(Array[Byte]) || Body(String)
+// TODO ContentType(type: Type, charset: Option[Charset])       Type(String) || Type(type: String, subType: String)
 case class Request(host: String,
                    port: Int = 80,
                    path: String,
                    parameters: Map[String,String] = Map(),
+                   body: Body = NoBody,
                    cookies: Seq[Cookie] = Nil,
                    headers: Seq[Header] = Nil
                    )
+
+object Body {
+    def apply(body: Array[Byte]): Body = ByteBody(body)
+    def apply(body: String): Body = StringBody(body)
+}
+
+sealed trait Body
+object NoBody extends Body
+case class ByteBody(body: Array[Byte]) extends Body
+case class StringBody(body: String) extends Body
 
 case class Cookie(domain: String = "",
                   name: String = "",
