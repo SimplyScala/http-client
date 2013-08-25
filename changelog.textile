@@ -19,7 +19,9 @@ h2. Version 0.2
     * delivery date : ???
         * developer(s)  : bourdon.ugo@gmail.com
         * features      :
+            ** Request object contains Body params for all http verb
+            ** Fluent AsyncHttpClient API
             ** http proxy handling
-            ** SSL handling
-            ** use AsyncHttpClientConfig.Builder() for AsyncHttpClient constructor (enabled all config properties of java AsyncHttpClient)
             ** online scala doc
+            ** SSL handling  ???
+            ** use AsyncHttpClientConfig.Builder() for AsyncHttpClient constructor (enabled all config properties of java AsyncHttpClient) ???
