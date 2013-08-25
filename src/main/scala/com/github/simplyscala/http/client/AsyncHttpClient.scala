@@ -2,10 +2,8 @@ package com.github.simplyscala.http.client
 
 import com.ning.http.client.{AsyncHttpClient => JavaAsyncHttpClient, Cookie => JavaCookie, AsyncHttpClientConfig, AsyncCompletionHandler, Response}
 import concurrent.{Promise, Future}
-import com.github.simplyscala.http.client.request.util._
 import scala.concurrent.duration._
 import com.github.simplyscala.http.client.request.util.Request
-import com.github.simplyscala.http.client.request.util.ByteBody
 
 /**
  * execute some HTTP Request (GET, POST, ...) asynchronously
