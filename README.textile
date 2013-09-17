@@ -7,6 +7,8 @@ This works in a Java 6+ environment
 
 The project is available in 0.1-SNAPSHOT version !
 
+The actual project release version is "0.1":http://search.maven.org/#artifactdetails|com.github.simplyscala|http-client_2.10|0.1|jar
+
 h2. Roadmap
 
 * simple GET request                                                                   OK  (0.1-SNAPSHOT)
@@ -30,6 +32,42 @@ h3. Git repo
 simplyscala-server is a SBT project.
 It use 0.12 sbt version.
 
+h3. Maven dependency
+
+<pre><code>
+   <dependency>
+      <groupId>com.github.simplyscala</groupId>
+      <artifactId>http-client_2.10</artifactId>
+      <version>0.1</version>
+   </dependency>
+</code></pre>
+
+h3. SBT dependency
+
+<pre><code>
+    libraryDependencies += "com.github.simplyscala" %% "http-client" % "0.1"
+</code></pre>
+
+    Only the following Scala versions 2.10.x are currently supported.
+
+h4. Play! specific dependency management
+
+In your play! project Build file :
+
+<pre><code>
+    object ApplicationBuild extends Build {
+
+        val appDependencies = Seq (
+            "com.github.simplyscala" %% "http-client" % "0.1"
+        )
+    }
+</code></pre>
+
+h3. Simple JAR file
+
+"0.1 jar version":https://oss.sonatype.org/content/repositories/releases/com/github/simplyscala/http-client_2.10/0.1/http-client_2.10-0.1.jar
+
+
 h3. Try SNAPSHOT version
 
 You could be tempted to try SNAPSHOT version to test project's next features.
@@ -51,7 +89,7 @@ h4. with Maven
    <dependency>
       <groupId>com.github.simplyscala</groupId>
       <artifactId>http-client_2.10</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>0.2-SNAPSHOT</version>
     </dependency>
 </code></pre>
 
@@ -60,7 +98,7 @@ h4. with SBT
 <pre><code>
    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-   libraryDependencies += "com.github.simplyscala" %% "http-client" % "0.1-SNAPSHOT"
+   libraryDependencies += "com.github.simplyscala" %% "http-client" % "0.2-SNAPSHOT"
 </code></pre>
 
 h2. Usage
