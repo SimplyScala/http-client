@@ -1,6 +1,6 @@
 h2. Version 0.1
 
-    * delivery date : ???
+    * delivery date : 25/08/2013
     * developer(s)  : bourdon.ugo@gmail.com
     * features      :
         ** async API with 'com.ning % async-http-client' implementation
@@ -25,3 +25,4 @@ h2. Version 0.2
             ** online scala doc
             ** SSL handling  ???
             ** use AsyncHttpClientConfig.Builder() for AsyncHttpClient constructor (enabled all config properties of java AsyncHttpClient) ???
+            ** online ScalaDoc
